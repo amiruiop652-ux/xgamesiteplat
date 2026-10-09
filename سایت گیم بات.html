@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>XGamePlat | پلتفرم واسطه‌گری امن اکانت گیمینگ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Vazirmatn Font -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#07090E',
+                            card: '#11151D',
+                            border: '#1E2533',
+                            accent: '#6366F1',
+                            neon: '#22D3EE',
+                            danger: '#EF4444',
+                            success: '#10B981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #07090E;
+            color: #F3F4F6;
+            font-family: 'Vazirmatn', sans-serif;
+            user-select: none;
+            overflow-x: hidden;
+        }
+        .glow-neon {
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+        }
+        .glow-accent {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+        }
+        .modal-blur {
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- SPLASH / LOADING SCREEN -->
+    <div id="splashScreen" class="fixed inset-0 z-50 bg-[#07090E] flex flex-col items-center justify-center transition-opacity duration-500 px-4 text-center">
+        <div class="relative flex items-center justify-center mb-5">
+            <div class="w-24 h-24 rounded-full border-4 border-brand-accent/30 border-t-brand-neon animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fa-solid fa-gamepad text-3xl text-brand-neon animate-pulse"></i>
+            </div>
+        </div>
+        <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-neon to-brand-accent mb-2">
+            XGamePlat
+        </h1>
+        <p class="text-gray-400 text-xs mb-5">پلتفرم تخصصی واسطه‌گری امن اکانت‌های بازی</p>
+        <button onclick="closeSplash()" class="w-full max-w-xs py-3 bg-gradient-to-r from-brand-accent to-brand-neon text-black font-extrabold rounded-xl glow-neon text-xs">
+            ورود به پلتفرم
+        </button>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="bg-brand-card/95 border-b border-brand-border sticky top-0 z-30 backdrop-blur-md px-3 py-3">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <!-- LOGO -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="renderListings()">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-accent to-brand-neon flex items-center justify-center text-black font-black text-lg shadow-md">
+                    X
+                </div>
+                <div>
+                    <h2 class="text-sm font-black tracking-wider text-white">XGame<span class="text-brand-neon">Plat</span></h2>
+                    <p class="text-[9px] text-gray-400">واسطه‌گری امن</p>
+                </div>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="flex items-center gap-1.5">
+                <button onclick="checkAuthAndOpenModal('addModal')" class="flex items-center gap-1 bg-brand-accent/20 border border-brand-accent/50 text-brand-accent px-2.5 py-1.5 rounded-lg text-[11px] font-bold">
+                    <i class="fa-solid fa-plus-circle"></i>
+                    <span>ثبت آگهی</span>
+                </button>
+
+                <div id="authButtons"></div>
+
+                <button onclick="promptAdminPassword()" class="bg-gray-900 text-amber-400 p-2 rounded-lg border border-amber-500/30 text-xs" title="پنل مدیریت">
+                    <i class="fa-solid fa-user-shield text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-4xl mx-auto px-3 py-4 flex-1 w-full">
+
+        <!-- BANNER -->
+        <div class="bg-gradient-to-r from-indigo-950/70 via-brand-card to-cyan-950/50 border border-brand-accent/30 rounded-2xl p-5 mb-5 relative overflow-hidden shadow-lg">
+            <div class="relative z-10">
+                <span class="bg-brand-neon/10 text-brand-neon text-[10px] px-2.5 py-0.5 rounded-full font-bold border border-brand-neon/30">سیستم واسطه رسمی و امن</span>
+                <h1 class="text-lg font-black mt-2.5 mb-1.5 text-white">خرید و فروش امن اکانت‌های بازی</h1>
+                <p class="text-gray-300 text-[11px] leading-relaxed mb-4">انجام معاملات بدون ریسک کلاهبرداری. دریافت کد پیگیری و تسویه آنی.</p>
+                <button onclick="checkAuthAndOpenModal('addModal')" class="bg-brand-accent text-white text-[11px] font-bold px-4 py-2 rounded-xl glow-accent">
+                    ثبت آگهی جدید اکانت
+                </button>
+            </div>
+        </div>
+
+        <!-- SEARCH & FILTER BAR -->
+        <div class="flex flex-col sm:flex-row gap-2 mb-4">
+            <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3 text-gray-400 text-xs"></i>
+                <input type="text" id="searchInput" oninput="renderListings()" placeholder="جستجوی نام بازی یا کد پیگیری..." class="w-full bg-brand-card border border-brand-border rounded-xl pr-10 pl-3 py-2 text-xs text-white focus:outline-none focus:border-brand-neon">
+            </div>
+            <div>
+                <select id="priceFilter" onchange="renderListings()" class="w-full sm:w-auto bg-brand-card border border-brand-border rounded-xl px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-brand-neon">
+                    <option value="all">همه قیمت‌ها</option>
+                    <option value="under1m">زیر ۱ میلیون</option>
+                    <option value="1m-3m">۱ تا ۳ میلیون</option>
+                    <option value="3m-5m">۳ تا ۵ میلیون</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- LISTINGS GRID -->
+        <div id="listingsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand-card border-t border-brand-border py-4 mt-8 text-center text-[10px] text-gray-500 px-2">
+        <p>تمامی حقوق محفوظ است © ۱۴۰۳ - <span class="text-brand-neon font-bold">XGamePlat</span></p>
+    </footer>
+
+    <!-- MODAL: REGISTER / LOGIN -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-black/85 modal-blur hidden flex items-center justify-center p-3">
+        <div class="bg-brand-card border border-brand-border rounded-2xl max-w-sm w-full p-5 relative max-h-[90vh] overflow-y-auto shadow-2xl">
+            <button onclick="closeModal('authModal')" class="absolute left-3 top-3 text-gray-400"><i class="fa-solid fa-xmark text-base"></i></button>
+            
+            <div class="flex border-b border-brand-border mb-4 text-xs">
+                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 font-bold text-brand-neon border-b-2 border-brand-neon">ورود</button>
+                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 font-bold text-gray-400 border-b-2 border-transparent">ثبت‌نام جدید</button>
+            </div>
+
+            <!-- LOGIN -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">نام کاربری *</label>
+                    <input type="text" id="loginUsername" required class="w-full bg-gray-900 border border-brand-border rounded-xl px-3 py-2 text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">رمز عبور *</label>
+                    <input type="password" id="loginPassword" required class="w-full bg-gray-900 border border-brand-border rounded-xl px-3 py-2 text-xs text-white">
+                </div>
+                <button type="submit" class="w-full bg-brand-neon text-black font-extrabold py-2.5 rounded-xl text-xs mt-2">ورود به حساب</button>
+            </form>
+
+            <!-- REGISTER -->
+            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-2.5 hidden">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] text-gray-400 mb-1">نام *</label>
+                        <input type="text" id="regFirstName" required class="w-full bg-gray-900 border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-400 mb-1">نام خانوادگی</label>
+                        <input type="text" id="regLastName" class="w-full bg-gray-900 border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">نام کاربری یکتا *</label>
+                    <input type="text" id="regUsername" required class="w-full bg-gray-900 border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">موبایل تلگرام *</label>
+                    <input type="tel" id="regPhone" placeholder="09..." required class="w-full bg-gray-900 border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] text-gray-400 mb-1">رمز عبور *</label>
+                        <input type="password" id="regPassword" required class="w-full bg-gray-900 border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-400 mb-1">سن</label>
+                        <input type="number" id="regAge" class="w-full bg-gray-900 border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">شماره کارت بانکی *</label>
+                    <input type="text" id="regCardNumber" placeholder="6037..." required class="w-full bg-gray-900 border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                </div>
+                <button type="submit" class="w-full bg-brand-accent text-white font-bold py-2.5 rounded-xl text-xs mt-1">تایید و ثبت‌نام</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD LISTING -->
+    <div id="addModal" class="fixed inset-0 z-50 bg-black/85 modal-blur hidden flex items-center justify-center p-3">
+        <div class="bg-brand-card border border-brand-border rounded-2xl max-w-sm w-full p-5 relative max-h-[90vh] overflow-y-auto shadow-2xl">
+            <button onclick="closeModal('addModal')" class="absolute left-3 top-3 text-gray-400"><i class="fa-solid fa-xmark text-base"></i></button>
+            <h3 class="text-xs font-extrabold text-white mb-1">ثبت سفارش آگهی اکانت</h3>
+            <p class="text-[10px] text-gray-400 mb-3">مشخصات اکانت خود را وارد کنید.</p>
+            
+            <form onsubmit="handleUserSubmitListing(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">نام محصول (عنوان) *</label>
+                    <input type="text" id="userAddTitle" placeholder="مثلاً: اکانت کلش لول ۲۰۰" required class="w-full bg-gray-900 border border-brand-border rounded-xl px-3 py-2 text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">قیمت (۵۰ هزار تا ۵ میلیون) *</label>
+                    <input type="number" id="userAddPrice" min="50000" max="5000000" placeholder="تومان" required class="w-full bg-gray-900 border border-brand-border rounded-xl px-3 py-2 text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">انتخاب عکس اکانت *</label>
+                    <input type="file" id="userAddImageFile" accept="image/*" required class="w-full bg-gray-900 border border-brand-border rounded-xl px-2.5 py-1.5 text-[11px] text-gray-300 file:ml-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-brand-accent file:text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">شماره تماس *</label>
+                    <input type="tel" id="userAddPhone" placeholder="09..." required class="w-full bg-gray-900 border border-brand-border rounded-xl px-3 py-2 text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">شماره کارت جهت واریز *</label>
+                    <input type="text" id="userAddCard" placeholder="6037..." required class="w-full bg-gray-900 border border-brand-border rounded-xl px-3 py-2 text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">توضیحات تکمیلی *</label>
+                    <textarea id="userAddDesc" rows="2" placeholder="جزئیات..." required class="w-full bg-gray-900 border border-brand-border rounded-xl px-3 py-2 text-xs text-white"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-brand-neon text-black font-extrabold py-2.5 rounded-xl text-xs">کپی فاکتور و ارسال به ادمین</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: INVOICE -->
+    <div id="invoiceModal" class="fixed inset-0 z-50 bg-black/85 modal-blur hidden flex items-center justify-center p-3">
+        <div class="bg-brand-card border border-brand-neon/30 rounded-2xl max-w-sm w-full p-5 relative shadow-2xl">
+            <button onclick="closeModal('invoiceModal')" class="absolute left-3 top-3 text-gray-400"><i class="fa-solid fa-xmark text-base"></i></button>
+            
+            <div class="text-center mb-3">
+                <div class="w-10 h-10 bg-brand-neon/10 text-brand-neon rounded-full flex items-center justify-center mx-auto mb-2 text-lg">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <h3 class="text-xs font-extrabold text-white">فاکتور ثبت واسطه‌گری</h3>
+                <p class="text-[10px] text-gray-400">فاکتور در کلیپ‌بورد کپی شد.</p>
+            </div>
+
+            <div id="invoiceContent" class="bg-gray-900 border border-brand-border rounded-xl p-3 text-[10px] font-mono text-gray-300 space-y-1 mb-3 max-h-40 overflow-y-auto"></div>
+
+            <button onclick="openTelegramAdmin()" class="w-full bg-brand-accent text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs">
+                <i class="fa-brands fa-telegram text-sm"></i>
+                <span>ارسال به تلگرام ادمین (@PV_ADMIN_Xgameplat)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: ADMIN -->
+    <div id="adminModal" class="fixed inset-0 z-50 bg-black/90 modal-blur hidden flex items-center justify-center p-3">
+        <div class="bg-brand-card border border-amber-500/30 rounded-2xl max-w-2xl w-full p-5 relative max-h-[90vh] overflow-y-auto shadow-2xl">
+            <button onclick="closeModal('adminModal')" class="absolute left-3 top-3 text-gray-400"><i class="fa-solid fa-xmark text-base"></i></button>
+            
+            <div class="flex items-center gap-2.5 mb-4">
+                <div class="p-2.5 bg-amber-500/10 text-amber-400 rounded-xl">
+                    <i class="fa-solid fa-user-shield text-base"></i>
+                </div>
+                <div>
+                    <h3 class="text-xs font-extrabold text-white">پنل مدیریت کل (Super Admin)</h3>
+                    <p class="text-[10px] text-gray-400">مدیریت آگهی‌ها و کاربران</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+                <div class="bg-gray-900 border border-brand-border rounded-xl p-2.5">
+                    <span class="text-[9px] text-gray-400">درآمد کارمزد</span>
+                    <p id="statFees" class="text-xs font-bold text-brand-neon">0 تومان</p>
+                </div>
+                <div class="bg-gray-900 border border-brand-border rounded-xl p-2.5">
+                    <span class="text-[9px] text-gray-400">کل کاربران</span>
+                    <p id="statUsers" class="text-xs font-bold text-white">0</p>
+                </div>
+                <div class="bg-gray-900 border border-brand-border rounded-xl p-2.5">
+                    <span class="text-[9px] text-gray-400">کل آگهی‌ها</span>
+                    <p id="statListings" class="text-xs font-bold text-white">0</p>
+                </div>
+                <div class="bg-gray-900 border border-brand-border rounded-xl p-2.5">
+                    <span class="text-[9px] text-gray-400">کارمزد معامله</span>
+                    <p class="text-xs font-bold text-amber-400">10%</p>
+                </div>
+            </div>
+
+            <!-- TRACKING -->
+            <div class="bg-gray-900 border border-amber-500/20 rounded-xl p-3 mb-4">
+                <label class="block text-[11px] font-bold text-amber-400 mb-1.5"><i class="fa-solid fa-barcode ml-1"></i> پیگیری محصول با کد:</label>
+                <div class="flex gap-2">
+                    <input type="text" id="adminTrackInput" placeholder="مثلاً XGP-12345" class="flex-1 bg-brand-card border border-brand-border rounded-xl px-3 py-1.5 text-xs text-white">
+                    <button onclick="trackListingByCode()" class="bg-amber-500 text-black font-bold px-3 py-1.5 rounded-xl text-xs">بررسی</button>
+                </div>
+                <div id="trackResultBox" class="mt-2 text-xs text-gray-300 hidden bg-brand-card p-2.5 rounded-lg border border-brand-border"></div>
+            </div>
+
+            <div class="flex border-b border-brand-border mb-3 gap-3 text-xs font-bold">
+                <button onclick="switchAdminTab('listings')" id="adminTabListings" class="pb-1.5 text-amber-400 border-b-2 border-amber-400">آگهی‌ها</button>
+                <button onclick="switchAdminTab('users')" id="adminTabUsers" class="pb-1.5 text-gray-400 border-b-2 border-transparent">کاربران</button>
+            </div>
+
+            <div id="adminSectionListings" class="space-y-3">
+                <div class="bg-gray-900 border border-brand-border rounded-xl p-3">
+                    <h4 class="text-[11px] font-bold text-white mb-2"><i class="fa-solid fa-plus text-brand-neon ml-1"></i> افزودن مستقیم محصول</h4>
+                    <form onsubmit="adminAddListing(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <input type="text" id="admTitle" placeholder="نام محصول" required class="bg-brand-card border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                        <input type="number" id="admPrice" placeholder="قیمت (تومان)" required class="bg-brand-card border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                        <input type="file" id="admImageFile" accept="image/*" required class="bg-brand-card border border-brand-border rounded-xl px-2 py-1 text-[10px] text-gray-300">
+                        <input type="text" id="admPhone" placeholder="شماره تماس" required class="bg-brand-card border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" id="admCard" placeholder="شماره کارت تسویه" required class="bg-brand-card border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" id="admDesc" placeholder="توضیحات کوتاه" required class="bg-brand-card border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white">
+                        <button type="submit" class="sm:col-span-2 bg-brand-neon text-black font-bold py-2 rounded-xl text-xs">ثبت و انتشار محصول</button>
+                    </form>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-[11px] text-gray-300">
+                        <thead class="bg-gray-900 text-gray-400">
+                            <tr>
+                                <th class="p-2">کد</th>
+                                <th class="p-2">نام</th>
+                                <th class="p-2">قیمت</th>
+                                <th class="p-2">وضعیت</th>
+                                <th class="p-2">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminListingsTable" class="divide-y divide-brand-border"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="adminSectionUsers" class="overflow-x-auto hidden">
+                <table class="w-full text-right text-[11px] text-gray-300">
+                    <thead class="bg-gray-900 text-gray-400">
+                        <tr>
+                            <th class="p-2">نام</th>
+                            <th class="p-2">یوزرنیم</th>
+                            <th class="p-2">موبایل</th>
+                            <th class="p-2">رمز</th>
+                            <th class="p-2">کارت</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminUsersTable" class="divide-y divide-brand-border"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const ADMIN_PASS = "211392";
+        const ADMIN_TG = "PV_ADMIN_Xgameplat";
+
+        let currentUser = JSON.parse(localStorage.getItem('xgp_current_user')) || null;
+        let users = JSON.parse(localStorage.getItem('xgp_users')) || [];
+        let listings = JSON.parse(localStorage.getItem('xgp_listings')) || [];
+        let currentClipboardText = "";
+
+        window.onload = () => {
+            renderAuthStatus();
+            renderListings();
+        };
+
+        function closeSplash() {
+            document.getElementById('splashScreen').classList.add('opacity-0');
+            setTimeout(() => document.getElementById('splashScreen').style.display = 'none', 500);
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+
+        function renderAuthStatus() {
+            const container = document.getElementById('authButtons');
+            if (currentUser) {
+                container.innerHTML = `
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[11px] text-brand-neon font-bold hidden sm:inline">${currentUser.firstName}</span>
+                        <button onclick="handleLogout()" class="bg-red-500/10 text-red-400 px-2.5 py-1.5 rounded-lg text-[11px]">خروج</button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openModal('authModal')" class="bg-brand-accent text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold">ورود / ثبت‌نام</button>
+                `;
+            }
+        }
+
+        function switchAuthTab(tab) {
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+                document.getElementById('tabLoginBtn').className = "flex-1 py-2 font-bold text-brand-neon border-b-2 border-brand-neon text-xs";
+                document.getElementById('tabRegisterBtn').className = "flex-1 py-2 font-bold text-gray-400 border-b-2 border-transparent text-xs";
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+                document.getElementById('tabRegisterBtn').className = "flex-1 py-2 font-bold text-brand-neon border-b-2 border-brand-neon text-xs";
+                document.getElementById('tabLoginBtn').className = "flex-1 py-2 font-bold text-gray-400 border-b-2 border-transparent text-xs";
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value.trim();
+            if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+                alert('این نام کاربری قبلاً ثبت‌نام کرده است!');
+                return;
+            }
+            const newUser = {
+                firstName: document.getElementById('regFirstName').value.trim(),
+                lastName: document.getElementById('regLastName').value.trim(),
+                username: username,
+                phone: document.getElementById('regPhone').value.trim(),
+                password: document.getElementById('regPassword').value.trim(),
+                age: document.getElementById('regAge').value,
+                cardNumber: document.getElementById('regCardNumber').value.trim()
+            };
+            users.push(newUser);
+            localStorage.setItem('xgp_users', JSON.stringify(users));
+            currentUser = newUser;
+            localStorage.setItem('xgp_current_user', JSON.stringify(currentUser));
+            alert('ثبت‌نام با موفقیت انجام شد!');
+            closeModal('authModal');
+            renderAuthStatus();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUsername').value.trim();
+            const p = document.getElementById('loginPassword').value.trim();
+            const found = users.find(user => user.username.toLowerCase() === u.toLowerCase() && user.password === p);
+            if (!found) {
+                alert('نام کاربری یا رمز عبور اشتباه است!');
+                return;
+            }
+            currentUser = found;
+            localStorage.setItem('xgp_current_user', JSON.stringify(currentUser));
+            alert('با موفقیت وارد شدید.');
+            closeModal('authModal');
+            renderAuthStatus();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('xgp_current_user');
+            renderAuthStatus();
+        }
+
+        function checkAuthAndOpenModal(modalId) {
+            if (!currentUser) {
+                alert('لطفاً ابتدا ثبت‌نام کرده یا وارد حساب خود شوید.');
+                openModal('authModal');
+                return;
+            }
+            openModal(modalId);
+        }
+
+        function convertImageToBase64(fileInputId, callback) {
+            const fileInput = document.getElementById(fileInputId);
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) { callback(e.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else { callback(''); }
+        }
+
+        function handleUserSubmitListing(e) {
+            e.preventDefault();
+            const title = document.getElementById('userAddTitle').value.trim();
+            const price = parseInt(document.getElementById('userAddPrice').value);
+            const phone = document.getElementById('userAddPhone').value.trim();
+            const card = document.getElementById('userAddCard').value.trim();
+            const desc = document.getElementById('userAddDesc').value.trim();
+
+            convertImageToBase64('userAddImageFile', function(base64Image) {
+                const trackingCode = "XGP-" + Math.floor(10000 + Math.random() * 90000);
+                const newListing = {
+                    id: Date.now(),
+                    trackingCode,
+                    title,
+                    price,
+                    image: base64Image,
+                    phone,
+                    card,
+                    description: desc,
+                    status: "در انتظار بررسی",
+                    seller: currentUser.username
+                };
+                listings.unshift(newListing);
+                localStorage.setItem('xgp_listings', JSON.stringify(listings));
+
+                currentClipboardText = `🧾 [فاکتور ثبت آگهی اکانت - XGamePlat]\n` +
+                    `----------------------------------------\n` +
+                    `🏷️ کد پیگیری: ${trackingCode}\n` +
+                    `🎮 نام محصول: ${title}\n` +
+                    `💰 قیمت: ${price.toLocaleString()} تومان\n` +
+                    `📞 شماره تماس: ${phone}\n` +
+                    `💳 شماره کارت: ${card}\n` +
+                    `👤 فروشنده: @${currentUser.username}\n` +
+                    `📝 توضیحات: ${desc}\n` +
+                    `----------------------------------------\n` +
+                    `ارسال جهت تایید به ادمین.`;
+
+                navigator.clipboard.writeText(currentClipboardText);
+                document.getElementById('invoiceContent').innerText = currentClipboardText;
+                closeModal('addModal');
+                openModal('invoiceModal');
+                renderListings();
+            });
+        }
+
+        function openTelegramAdmin() {
+            alert('فاکتور کپی شد. به تلگرام منتقل می‌شوید.');
+            window.open(`https://t.me/${ADMIN_TG}`, '_blank');
+        }
+
+        function promptAdminPassword() {
+            const pass = prompt("رمز عبور مدیریت:");
+            if (pass === ADMIN_PASS) openAdminModal();
+            else if (pass !== null) alert('رمز عبور اشتباه است!');
+        }
+
+        function renderListings() {
+            const grid = document.getElementById('listingsGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const priceFilter = document.getElementById('priceFilter').value;
+
+            const filtered = listings.filter(item => {
+                const matchSearch = item.title.toLowerCase().includes(search) || item.trackingCode.toLowerCase().includes(search);
+                let matchPrice = true;
+                if (priceFilter === 'under1m') matchPrice = item.price < 1000000;
+                if (priceFilter === '1m-3m') matchPrice = item.price >= 1000000 && item.price <= 3000000;
+                if (priceFilter === '3m-5m') matchPrice = item.price >= 3000000 && item.price <= 5000000;
+                return matchSearch && matchPrice;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500 text-xs">هیچ محصولی یافت نشد.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => `
+                <div class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-md flex flex-col justify-between">
+                    <div>
+                        <div class="h-40 overflow-hidden relative bg-black/40">
+                            <img src="${item.image}" class="w-full h-full object-cover">
+                            <span class="absolute top-2.5 right-2.5 bg-black/70 text-brand-neon text-[10px] font-bold px-2 py-0.5 rounded border border-brand-neon/30 font-mono">
+                                ${item.trackingCode}
+                            </span>
+                            <span class="absolute top-2.5 left-2.5 bg-black/70 text-white text-[11px] font-bold px-2.5 py-0.5 rounded border border-white/20">
+                                ${item.price.toLocaleString()} ت
+                            </span>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="font-bold text-white text-xs mb-1 line-clamp-1">${item.title}</h3>
+                            <p class="text-[10px] text-gray-400 line-clamp-2 mb-2 leading-relaxed">${item.description}</p>
+                            <div class="flex items-center justify-between text-[9px] text-gray-400 bg-gray-900/60 p-2 rounded-lg">
+                                <span>وضعیت: <strong class="${item.status === 'فروخته شده' ? 'text-red-400' : 'text-emerald-400'}">${item.status}</strong></span>
+                                <span>@${item.seller}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 pt-0">
+                        <button onclick="orderItemDirect('${item.trackingCode}')" class="w-full bg-gradient-to-r from-brand-accent to-brand-neon text-black font-extrabold py-2 rounded-xl text-[11px] flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <span>خرید و استعلام واسطه</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function orderItemDirect(code) {
+            const item = listings.find(l => l.trackingCode === code);
+            if (!item) return;
+            const fee = item.price * 0.1;
+            const total = item.price + fee;
+
+            currentClipboardText = `🧾 [فاکتور خرید واسطه‌گری XGamePlat]\n` +
+                `----------------------------------------\n` +
+                `🏷️ کد: ${item.trackingCode}\n` +
+                `🎮 محصول: ${item.title}\n` +
+                `💰 قیمت: ${item.price.toLocaleString()} ت\n` +
+                `🛡️ کارمزد (۱۰٪): ${fee.toLocaleString()} ت\n` +
+                `💳 کل قابل پرداخت: ${total.toLocaleString()} ت\n` +
+                `----------------------------------------\n` +
+                `ارسال جهت خرید امن.`;
+
+            navigator.clipboard.writeText(currentClipboardText);
+            document.getElementById('invoiceContent').innerText = currentClipboardText;
+            openModal('invoiceModal');
+        }
+
+        function openAdminModal() {
+            renderAdminData();
+            openModal('adminModal');
+        }
+
+        function renderAdminData() {
+            document.getElementById('statUsers').innerText = users.length;
+            document.getElementById('statListings').innerText = listings.length;
+            let totalFee = listings.reduce((acc, curr) => acc + (curr.price * 0.1), 0);
+            document.getElementById('statFees').innerText = `${totalFee.toLocaleString()} ت`;
+
+            document.getElementById('adminListingsTable').innerHTML = listings.map((l, i) => `
+                <tr class="hover:bg-gray-800/40">
+                    <td class="p-2 font-mono text-brand-neon">${l.trackingCode}</td>
+                    <td class="p-2">${l.title}</td>
+                    <td class="p-2">${l.price.toLocaleString()}</td>
+                    <td class="p-2">
+                        <select onchange="changeStatus(${i}, this.value)" class="bg-gray-900 border border-brand-border rounded px-1.5 py-1 text-[10px] text-white">
+                            <option value="در انتظار بررسی" ${l.status === 'در انتظار بررسی' ? 'selected' : ''}>در انتظار</option>
+                            <option value="تایید شده" ${l.status === 'تایید شده' ? 'selected' : ''}>تایید شده</option>
+                            <option value="فروخته شده" ${l.status === 'فروخته شده' ? 'selected' : ''}>فروخته شده</option>
+                        </select>
+                    </td>
+                    <td class="p-2">
+                        <button onclick="deleteListing(${i})" class="text-red-400 font-bold">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('adminUsersTable').innerHTML = users.map(u => `
+                <tr class="hover:bg-gray-800/40">
+                    <td class="p-2">${u.firstName}</td>
+                    <td class="p-2 text-brand-neon font-mono">@${u.username}</td>
+                    <td class="p-2">${u.phone}</td>
+                    <td class="p-2 font-mono text-amber-300">${u.password}</td>
+                    <td class="p-2 font-mono">${u.cardNumber}</td>
+                </tr>
+            `).join('');
+        }
+
+        function adminAddListing(e) {
+            e.preventDefault();
+            convertImageToBase64('admImageFile', function(base64Image) {
+                const trackingCode = "XGP-" + Math.floor(10000 + Math.random() * 90000);
+                listings.unshift({
+                    id: Date.now(),
+                    trackingCode,
+                    title: document.getElementById('admTitle').value.trim(),
+                    price: parseInt(document.getElementById('admPrice').value),
+                    image: base64Image,
+                    phone: document.getElementById('admPhone').value.trim(),
+                    card: document.getElementById('admCard').value.trim(),
+                    description: document.getElementById('admDesc').value.trim(),
+                    status: "تایید شده",
+                    seller: "Admin"
+                });
+                localStorage.setItem('xgp_listings', JSON.stringify(listings));
+                alert('محصول ثبت شد!');
+                renderAdminData();
+                renderListings();
+                e.target.reset();
+            });
+        }
+
+        function changeStatus(index, val) {
+            listings[index].status = val;
+            localStorage.setItem('xgp_listings', JSON.stringify(listings));
+            renderListings();
+        }
+
+        function deleteListing(index) {
+            listings.splice(index, 1);
+            localStorage.setItem('xgp_listings', JSON.stringify(listings));
+            renderAdminData();
+            renderListings();
+        }
+
+        function trackListingByCode() {
+            const code = document.getElementById('adminTrackInput').value.trim().toUpperCase();
+            const resBox = document.getElementById('trackResultBox');
+            const found = listings.find(l => l.trackingCode.toUpperCase() === code);
+            resBox.classList.remove('hidden');
+            if (!found) {
+                resBox.innerHTML = `<span class="text-red-400">یافت نشد.</span>`;
+                return;
+            }
+            resBox.innerHTML = `
+                <p><strong>عنوان:</strong> ${found.title}</p>
+                <p><strong>قیمت:</strong> ${found.price.toLocaleString()} تومان</p>
+                <p><strong>وضعیت:</strong> <span class="text-brand-neon">${found.status}</span></p>
+                <p><strong>تلفن:</strong> ${found.phone}</p>
+            `;
+        }
+
+        function switchAdminTab(tab) {
+            if (tab === 'listings') {
+                document.getElementById('adminSectionListings').classList.remove('hidden');
+                document.getElementById('adminSectionUsers').classList.add('hidden');
+                document.getElementById('adminTabListings').className = "pb-1.5 text-amber-400 border-b-2 border-amber-400 text-xs";
+                document.getElementById('adminTabUsers').className = "pb-1.5 text-gray-400 border-b-2 border-transparent text-xs";
+            } else {
+                document.getElementById('adminSectionListings').classList.add('hidden');
+                document.getElementById('adminSectionUsers').classList.remove('hidden');
+                document.getElementById('adminTabUsers').className = "pb-1.5 text-amber-400 border-b-2 border-amber-400 text-xs";
+                document.getElementById('adminTabListings').className, "pb-1.5 text-gray-400 border-b-2 border-transparent text-xs";
+            }
+        }
+    </script>
+</body>
+</html>
